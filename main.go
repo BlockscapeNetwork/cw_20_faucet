@@ -69,6 +69,18 @@ func printInfo() {
 
 // handler for the faucet endpoint
 func faucet(res http.ResponseWriter, req *http.Request) {
+	log.Print(req.Method)
+	log.Println(req.Header.Get("Origin"))
+	if origin := req.Header.Get("Origin"); origin != "" {
+		res.Header().Set("Access-Control-Allow-Origin", origin)
+		res.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		res.Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language, Content-Type, YourOwnHeader")
+	}
+	// Stop here if its Preflighted OPTIONS request
+	if req.Method == "OPTIONS" {
+		return
+	}
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 
@@ -97,7 +109,6 @@ func faucet(res http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Printf("INFO: Address %s reuested funds\n", faucetReqInfo.Address)
-	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.WriteHeader(200)
 	res.Write([]byte{})
 }
