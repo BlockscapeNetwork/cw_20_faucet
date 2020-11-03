@@ -97,6 +97,7 @@ func faucet(res http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Printf("INFO: Address %s reuested funds\n", faucetReqInfo.Address)
+	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.WriteHeader(200)
 	res.Write([]byte{})
 }
